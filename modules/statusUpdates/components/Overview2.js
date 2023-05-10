@@ -115,7 +115,6 @@ const query2 = `query($date: Date!) {
         const dates = [];
         let currentDate = startDate;
     
-        // Include the start date in the array
         dates.push(currentDate);
     
         const addDays = function (days) {
@@ -146,20 +145,15 @@ const query2 = `query($date: Date!) {
         }
         fetchDashData(curdate).then((s) => {
     
-          // setUserName(r.data.getStatusUpdate.memberStats.usernamecookie);
-          // r.data.getStatusUpdate.memberStats.map((item)=> {
-          console.log(curdate)
+
           if(s.data.getStatusUpdates[0].member.username === "aashraya"){
             setFirstCounter((prevState)=>prevState+1);
-            // console.log(firstCounter)
           }
           if(s.data.getStatusUpdates.slice(-1)[0].member.username === "aashraya"){
             setLastCounter((prevState)=>prevState+1);
-            // console.log(lastCounter)
-            // console.log("inc")
           }
-          // console.log(s.data.getStatusUpdates[0].member.username)
-          // console.log(s.data.getStatusUpdates.slice(-1)[0].member.username)
+          console.log(s.data.getStatusUpdates[0].member.username)
+          console.log(s.data.getStatusUpdates.slice(-1)[0].member.username)
     
           setLoaded(true);
 
@@ -169,7 +163,7 @@ const query2 = `query($date: Date!) {
     
       });
     }
-  });
+  },[startDate,endDate]);
 
   
 

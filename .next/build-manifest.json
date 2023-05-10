@@ -28,11 +28,6 @@
       "static/chunks/main.js",
       "static/chunks/webpack.js",
       "static/chunks/pages/status-updates/dashboard.js"
-    ],
-    "/status-updates/individual-report": [
-      "static/chunks/main.js",
-      "static/chunks/webpack.js",
-      "static/chunks/pages/status-updates/individual-report.js"
     ]
   },
   "ampFirstPages": []

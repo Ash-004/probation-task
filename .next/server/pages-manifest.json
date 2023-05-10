@@ -2,6 +2,5 @@
   "/_app": "pages/_app.js",
   "/_document": "pages/_document.js",
   "/_error": "pages/_error.js",
-  "/status-updates/dashboard": "pages/status-updates/dashboard.js",
-  "/status-updates/individual-report": "pages/status-updates/individual-report.js"
+  "/status-updates/dashboard": "pages/status-updates/dashboard.js"
 }
