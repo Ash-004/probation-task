@@ -1,6 +1,6 @@
 import React, { useEffect,useState } from 'react';
 import Base from '../../components/base'; 
-import Overview2 from '../../modules/statusUpdates/components/Overview2test';
+import Overview2 from '../../modules/statusUpdates/components/Overview2';
 import TitleBar from '../../components/titlebar';
 
 

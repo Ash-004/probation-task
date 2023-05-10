@@ -34,7 +34,7 @@ const Overview2 = () => {
   const[firstCounter,setFirstCounter] = useState(0);
   const[lastCounter,setLastCounter] = useState(0);
 
-  const query = `query($date: Date!) {
+  const query2 = `query($date: Date!) {
   getStatusUpdates(date: $date) {
     message
     member {
@@ -48,7 +48,7 @@ const Overview2 = () => {
 `;
 
 
-  const fetchData = async (variables) => dataFetch({ query, variables });
+  const fetchData = async (variables) => dataFetch({ query2, variables });
 
   useEffect(() => {
     if (!rangeLoaded) {
@@ -66,13 +66,13 @@ const Overview2 = () => {
 
 
       // fetchData(variables).then((r) => {
-      //
+      
       //   // setUserName(r.data.getStatusUpdate.memberStats.usernamecookie);
       //   // r.data.getStatusUpdate.memberStats.map((item)=> {
-      //
+      
       //   console.log(r.data.getStatusUpdates.slice(-1)[0].member.username)
       //   console.log(r.data.getStatusUpdates[0].member.username)
-      //
+      
       // });
 
 
