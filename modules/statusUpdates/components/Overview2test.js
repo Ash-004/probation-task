@@ -50,7 +50,7 @@ const Overview2 = () => {
   }
 }`;
 
-const query2 = `query($date: Date!) {
+  const query2 = `query($date: Date!) {
   getStatusUpdates(date: $date) {
     message
     member {
@@ -73,23 +73,23 @@ const query2 = `query($date: Date!) {
       setRangeLoaded(true);
       numberDays=7;
     }
-    
-      // console.log(moment(endDate).diff(moment(startDate), 'days'));
+
+    // console.log(moment(endDate).diff(moment(startDate), 'days'));
     if (!isLoaded && rangeLoaded) {
       const variables = {
         startDate: moment(startDate).format('YYYY-MM-DD'),
         endDate: moment(endDate).format('YYYY-MM-DD'),
       };
-      
+
       fetchData(variables).then((r) => {
         // setUserName(r.data.clubStatusUpdate.memberStats.usernamecookie);
         r.data.clubStatusUpdate.memberStats.map((item)=> {
-          if(item.user.username === "aashraya") {
+          if(item.user.username === usernamecookie) {
             var start = moment(startDate);
             var end = moment(endDate);
             const arr=[['status', 'count'],
-            ['Updates given'],
-            ['Not given'],];
+              ['Updates given'],
+              ['Not given'],];
             numberDays=moment(end).diff(moment(start), 'days');
             setDays(numberDays);
             arr[1].push(parseInt(item.statusCount));
@@ -102,9 +102,9 @@ const query2 = `query($date: Date!) {
           }
         });
 
-        
 
-        
+
+
         setData(r.data.clubStatusUpdate.memberStats);
         setDailyLogData(r.data.clubStatusUpdate.dailyLog);
         setLoaded(true);
@@ -114,69 +114,79 @@ const query2 = `query($date: Date!) {
 
         const dates = [];
         let currentDate = startDate;
-    
-        // Include the start date in the array
+
         dates.push(currentDate);
-    
+
         const addDays = function (days) {
           const date = new Date(this.valueOf());
           date.setDate(date.getDate() + days);
           return date;
         };
-    
+
         while (currentDate < endDate) {
-    
+
           currentDate = addDays.call(currentDate, 1);
           dates.push(currentDate);
         }
         return dates;
       }
-    
-    
-      const dates = getDates(startDate, endDate);
-    
-      setFirstCounter(0)
-      setLastCounter(0)
-      dates.forEach(function (date) {
-    
-    
-    
-        const curdate = {
-          date:moment(date).format('YYYY-MM-DD'),
-        }
-        fetchDashData(curdate).then((s) => {
-    
-          // setUserName(r.data.getStatusUpdate.memberStats.usernamecookie);
-          // r.data.getStatusUpdate.memberStats.map((item)=> {
-          // console.log(curdate)
-          if(s.data.getStatusUpdates[0].member.username === "aashraya"){
-            setFirstCounter((prevState)=>prevState+1);
-            // console.log(firstCounter)
-          }
-          if(s.data.getStatusUpdates.slice(-1)[0].member.username === "aashraya"){
-            setLastCounter((prevState)=>prevState+1);
-            // console.log(lastCounter)
-            // console.log("inc")
-          }
-          console.log(s.data.getStatusUpdates[0].member.username)
-          console.log(s.data.getStatusUpdates.slice(-1)[0].member.username)
-    
-          setLoaded(true);
 
+
+      const dates = getDates(startDate, endDate);
+
+      let firstCounter = 0;
+      let lastCounter = 0;
+      let missedUpdates = 0;
+      let isKicked = false;
+
+      dates.forEach(function (date) {
+
+        const curdate = {
+          date: moment(date).format('YYYY-MM-DD'),
+        }
+
+        fetchDashData(curdate).then((s) => {
+
+          const statusUpdates = s.data.getStatusUpdates;
+          const memberUsernames = statusUpdates.map(update => update.member.username);
+          const hasusername = memberUsernames.includes(usernamecookie);
+
+          if (!hasusername) {
+            missedUpdates++;
+          } else {
+            missedUpdates = 0;
+          }
+
+          if (missedUpdates >= 2) {
+            if (!isKicked) {
+              isKicked = true;
+
+              kickedCounter++;
+            }
+          } else {
+            isKicked = false;
+          }
+
+          if (statusUpdates[0].member.username === usernamecookie) {
+            firstCounter++;
+          }
+          if (statusUpdates.slice(-1)[0].member.username === usernamecookie) {
+            lastCounter++;
+          }
+
+          setLoaded(true);
         });
-    
-    
-    
       });
+
     }
   },[startDate,endDate]);
 
-  
+
 
   const handleRangeChange = (obj) => {
     if (obj[0] != null && obj[1] != null) {
       setStartDate(moment(obj[0]));
-      setEndDate(moment(obj[1]));   
+      setEndDate(moment(obj[1]));
       setLoaded(false);
       numberDays=moment(endDate).diff(moment(startDate), 'days');
 
@@ -201,43 +211,43 @@ const query2 = `query($date: Date!) {
           </div>
         </div>
       </div>
-      <div className="row m-0">   
+      <div className="row m-0">
         <div className="col-md-7 p-2">
-             <Card style={{ boxShadow: '10px 10px 5px rgba(0, 0, 0, 0.25)'}}>
-                      <div class="flex-container"
-                           style={{ display:'flex', flexBasis: 0 }}>
-                          <div class="flex-child yellow"
-                             style={{ flex:1, textAlign:'center'}}>
-                              <h3>{days}</h3>
-                              <h7>Total number of days</h7>
-                          </div>
-                          <div class="flex-child red"
-                             style={{ flex:1, textAlign:'center'}}>
-                              <h3>{given}</h3>
-                              <h7>Updates given</h7>
-                          </div>
-                          <div class="flex-child blue"
-                             style={{ flex:1, textAlign:'center'}}>
-                              <h3>{notGiven}</h3>
-                              <h7>Updates missed</h7>
-                          </div>
-                      </div>
-            </Card>
-            <Card style={{ boxShadow: '10px 10px 5px rgba(0, 0, 0, 0.25)', marginTop: '20px'}}>
-              <div><p>Number of times updated first:{firstCounter}</p></div>
-              <div><p>Number of times updated last:{lastCounter}</p></div>
-              <div><p>Number of times got kicked:☠</p></div>
-            </Card>
+          <Card style={{ boxShadow: '10px 10px 5px rgba(0, 0, 0, 0.25)'}}>
+            <div class="flex-container"
+                 style={{ display:'flex', flexBasis: 0 }}>
+              <div class="flex-child yellow"
+                   style={{ flex:1, textAlign:'center'}}>
+                <h3>{days}</h3>
+                <h7>Total number of days</h7>
+              </div>
+              <div class="flex-child red"
+                   style={{ flex:1, textAlign:'center'}}>
+                <h3>{given}</h3>
+                <h7>Updates given</h7>
+              </div>
+              <div class="flex-child blue"
+                   style={{ flex:1, textAlign:'center'}}>
+                <h3>{notGiven}</h3>
+                <h7>Updates missed</h7>
+              </div>
+            </div>
+          </Card>
+          <Card style={{ boxShadow: '10px 10px 5px rgba(0, 0, 0, 0.25)', marginTop: '20px'}}>
+            <div><p>Number of times updated first:{firstCounter}</p></div>
+            <div><p>Number of times updated last:{lastCounter}</p></div>
+            <div><p>Number of times got kicked:☠</p></div>
+          </Card>
         </div>
         <div className="col-md-5 p-2">
-             <Card style={{backgroundColor: '#FFFFFF', boxShadow: '10px 10px 5px rgba(0, 0, 0, 0.25)'}}>
-                           <Doughnut pdata={pieData}/>
-             </Card>
+          <Card style={{backgroundColor: '#FFFFFF', boxShadow: '10px 10px 5px rgba(0, 0, 0, 0.25)'}}>
+            <Doughnut pdata={pieData}/>
+          </Card>
         </div>
         <div className="col-md-12 p-2">
-               <Card style={{backgroundColor: '#FFFFFF', boxShadow: '10px 10px 5px rgba(0, 0, 0, 0.25)'}}>
-                  <Statsdash data={data} isLoaded={true} />
-                </Card>
+          <Card style={{backgroundColor: '#FFFFFF', boxShadow: '10px 10px 5px rgba(0, 0, 0, 0.25)'}}>
+            <Statsdash data={data} isLoaded={true} />
+          </Card>
         </div>
       </div>
     </div>
